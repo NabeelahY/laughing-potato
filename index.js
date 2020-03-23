@@ -1,5 +1,6 @@
 const { ApolloServer } = require('apollo-server');
 const typeDefs = require('./schema');
+const db = require('./database/dbConfig');
 
 let books = [
   {
@@ -20,9 +21,11 @@ let books = [
 
 const resolvers = {
   Query: {
-    books: () => books,
-    book: (parent, args) => {
-      return books.find(book => book.id === args.id);
+    books: () => db('books'),
+    book: (parent, arg) => {
+      return db('books')
+        .where({ id: arg.id })
+        .first();
     }
   },
 
