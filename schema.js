@@ -14,6 +14,11 @@ const typeDefs = gql`
     books: [Book]!
     book(id: ID!): Book
   }
+  type Mutation {
+    newBook(summary: String!, title: String, author: String): Book!
+    updateBook(id: ID!, author: String!): Book!
+    deleteBook(id: ID!): Book!
+  }
 `;
 
 module.exports = typeDefs;

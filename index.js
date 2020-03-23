@@ -1,7 +1,7 @@
 const { ApolloServer } = require('apollo-server');
 const typeDefs = require('./schema');
 
-const books = [
+let books = [
   {
     id: '1',
     summary:
@@ -23,6 +23,35 @@ const resolvers = {
     books: () => books,
     book: (parent, args) => {
       return books.find(book => book.id === args.id);
+    }
+  },
+
+  Mutation: {
+    newBook: (parent, args) => {
+      const book = {
+        id: String(books.length + 1),
+        title: args.title || '',
+        author: args.author || '',
+        summary: args.summary
+      };
+      books.push(book);
+      return book;
+    },
+    updateBook: (parent, args) => {
+      const index = books.findIndex(book => book.id === args.id);
+      const book = {
+        id: args.id,
+        author: args.author,
+        summary: books[index].summary,
+        title: books[index].title
+      };
+      books[index] = book;
+      return book;
+    },
+    deleteBook: (parent, args) => {
+      const deletedBook = books.find(book => book.id === args.id);
+      books = books.filter(book => book.id !== args.id);
+      return deletedBook;
     }
   }
 };
