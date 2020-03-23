@@ -1,5 +1,5 @@
-exports.up = function(knex) {
-  return knex.schema.createTable('books', tbl => {
+exports.up = function (knex) {
+  return knex.schema.createTable('books', (tbl) => {
     tbl.increments();
     tbl.text('author', 128).notNullable();
     tbl.text('title', 128).notNullable();
@@ -7,6 +7,6 @@ exports.up = function(knex) {
   });
 };
 
-exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('books')
+exports.down = function (knex) {
+  return knex.schema.dropTableIfExists('books');
 };
