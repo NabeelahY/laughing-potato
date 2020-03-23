@@ -2,23 +2,6 @@ const { ApolloServer } = require('apollo-server');
 const typeDefs = require('./schema');
 const db = require('./database/dbConfig');
 
-let books = [
-  {
-    id: '1',
-    summary:
-      "Just because my dreams are not the same as yours doesn't mean that they are not valid",
-    title: 'Little women',
-    author: 'May Louisa Alcott'
-  },
-  {
-    id: '2',
-    summary:
-      'How could such a small group of second rate tyrants ravage 900 million people for so long?',
-    title: 'Wild Swans',
-    author: 'Jung Chang'
-  }
-];
-
 const resolvers = {
   Query: {
     books: () => db('books'),
@@ -30,31 +13,36 @@ const resolvers = {
   },
 
   Mutation: {
-    newBook: (parent, args) => {
+    newBook: async (_, args) => {
       const book = {
-        id: String(books.length + 1),
-        title: args.title || '',
-        author: args.author || '',
+        title: args.title,
+        author: args.author,
         summary: args.summary
       };
-      books.push(book);
-      return book;
+      const newBook = await db('books')
+        .insert(book)
+        .returning('*');
+      return newBook[0];
     },
-    updateBook: (parent, args) => {
-      const index = books.findIndex(book => book.id === args.id);
-      const book = {
-        id: args.id,
-        author: args.author,
-        summary: books[index].summary,
-        title: books[index].title
+    updateBook: async (_, args) => {
+      const book = await resolvers.Query.book(_, args);
+      const bookUpdate = {
+        summary: args.summary || book.summary,
+        author: args.author || book.author,
+        title: args.title || book.title
       };
-      books[index] = book;
-      return book;
+      const updateBook = await db('books')
+        .where({ id: args.id })
+        .update(bookUpdate)
+        .returning('*');
+      return updateBook[0];
     },
-    deleteBook: (parent, args) => {
-      const deletedBook = books.find(book => book.id === args.id);
-      books = books.filter(book => book.id !== args.id);
-      return deletedBook;
+    deleteBook: async (_, args) => {
+      const book = await resolvers.Query.book(_, args);
+      await db('books')
+        .where({ id: args.id })
+        .del();
+      return book;
     }
   }
 };
