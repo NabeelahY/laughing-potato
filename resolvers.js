@@ -1,24 +1,18 @@
-const db = require('./database/dbConfig');
+const model = require('./models');
 const resolvers = {
   Query: {
-    books: () => db('books'),
-    book: (parent, arg) => {
-      return db('books')
-        .where({ id: arg.id })
-        .first();
-    }
+    books: () => model.getAllBooks(),
+    book: (parent, arg) => model.getBookById(arg.id)
   },
 
   Mutation: {
     newBook: async (_, args) => {
       const book = {
-        title: args.title ,
+        title: args.title,
         author: args.author,
         summary: args.summary
       };
-      const newBook = await db('books')
-        .insert(book)
-        .returning('*');
+      const newBook = await model.addBook(book);
       return newBook[0];
     },
     updateBook: async (_, args) => {
@@ -28,17 +22,12 @@ const resolvers = {
         author: args.author || book.author,
         title: args.title || book.title
       };
-      const updateBook = await db('books')
-        .where({ id: args.id })
-        .update(bookUpdate)
-        .returning('*');
+      const updateBook = await model.updateBook(args.id, bookUpdate);
       return updateBook[0];
     },
     deleteBook: async (_, args) => {
       const book = await resolvers.Query.book(_, args);
-      await db('books')
-        .where({ id: args.id })
-        .del();
+      await model.deleteBook(args.id);
       return book;
     }
   }
