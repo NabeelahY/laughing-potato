@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
   development: {
     client: 'pg',
-    connection: 'postgres://nab:password@localhost:5432/postgres',
+    connection: process.env.DEV_LOCAL,
     useNullAsDefault: true,
     migrations: {
       directory: './database/migrations'
@@ -12,7 +12,7 @@ module.exports = {
   },
   testing: {
     client: 'pg',
-    connection: 'postgres://lambda:password@localhost:5432/testing',
+    connection: process.env.TEST_URL,
     useNullAsDefault: true,
     migrations: {
       directory: './database/migrations'
