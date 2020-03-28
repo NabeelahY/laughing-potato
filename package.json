@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "lint": "eslint ./database --fix",
-    "test": "cross-env DB_ENV=testing jest --verbose --watchAll"
+    "test": "cross-env DB_ENV=testing jest --watchAll --forceExit"
   },
   "jest": {
     "testEnvirnoment": "node",
