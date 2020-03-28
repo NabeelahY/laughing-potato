@@ -6,10 +6,10 @@
   "scripts": {
     "start": "nodemon index.js",
     "lint": "eslint ./database --fix",
-    "test": "cross-env DB_ENV=testing jest --watchAll --forceExit"
+    "test": "cross-env DB_ENV=testing jest --runInBand --forceExit --detectOpenHandles"
   },
   "jest": {
-    "testEnvirnoment": "node",
+    "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]
